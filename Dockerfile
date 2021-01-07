@@ -1,52 +1,33 @@
-FROM ubuntu:latest
-LABEL maintainer "ZyCromerZ <neetroid97@gmail.com>"
+FROM python:3.6.4-alpine
 
-ENV TZ=Asia/Jakarta
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apk update
 
-RUN export DEBIAN_FRONTEND=noninteractive && \
-    apt-get update -qq && \
-    apt-get upgrade -y && \
-    apt-get -y install tzdata \
+RUN apk add --no-cache \
     git \
-    automake \
-    lzop \
-    bison \
-    gperf \
-    build-essential \
-    zip \
-    curl \
-    zlib1g-dev \
-    g++-multilib \
-    libxml2-utils \
-    bzip2 \
-    libbz2-dev \
-    libbz2-1.0 \
-    libghc-bzlib-dev \
-    squashfs-tools \
-    pngcrush \
-    schedtool \
-    dpkg-dev \
-    liblz4-tool \
-    make \
-    optipng \
-    bc \
-    libstdc++6 \
-    wget \
-    python3 \
-    python3-pip \
-    python \
-    gcc \
-    clang \
-    libssl-dev \
-    rsync \
-    flex \
-    git-lfs \
-    libz3-dev \
-    libz3-4 \
-    axel \
-    tar && \
-    python3 -m pip  install networkx
+    postgresql-libs \
+    jpeg-dev \
+    imagemagick
 
-RUN git config --global user.name 'ZyCromerZ'
-RUN git config --global user.email 'neetroid97@gmail.com'
+RUN apk add --no-cache --virtual .build-deps \
+    git \
+    gcc \
+    g++ \
+    musl-dev \
+    postgresql-dev \
+    libffi-dev \
+    libwebp-dev \
+    zlib-dev \
+    imagemagick-dev \
+    msttcorefonts-installer \
+    fontconfig
+
+RUN update-ms-fonts && \
+    fc-cache -f
+
+RUN mkdir /data
+
+RUN chmod 777 /data
+
+RUN apk del .build-deps
+
+CMD ["python"]
